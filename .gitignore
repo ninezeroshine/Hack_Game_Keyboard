@@ -21,3 +21,8 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+
+# Agent files (not needed for the game)
+.agent/
+.agents/
+skills-lock.json
