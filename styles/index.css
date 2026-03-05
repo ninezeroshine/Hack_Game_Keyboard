@@ -1,0 +1,179 @@
+/* ===== RESET & BASE ===== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* Terminal palette — softened for comfort */
+  --bg-primary: #0c1018;
+  --bg-secondary: #131a24;
+  --bg-tertiary: #1c2636;
+  --text-primary: #8ccfaa;
+  --text-dim: #5a9a78;
+  --text-muted: #3a5e4a;
+
+  /* Hit feedback colors — distinct but not harsh */
+  --color-perfect: #5ec4d4;
+  --color-good: #7fbf7f;
+  --color-bad: #d4a04a;
+  --color-miss: #d45a5a;
+
+  /* UI accent */
+  --accent: #3a8a96;
+  --accent-bright: #5aafbc;
+
+  /* Sizing */
+  --font-size-base: 20px;
+  --font-size-sm: 16px;
+  --font-size-lg: 24px;
+  --font-size-xl: 34px;
+  --font-size-xxl: 56px;
+  --font-size-huge: 84px;
+
+  /* Spacing (8pt grid) */
+  --sp-xs: 4px;
+  --sp-sm: 8px;
+  --sp-md: 16px;
+  --sp-lg: 24px;
+  --sp-xl: 32px;
+  --sp-xxl: 48px;
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --duration-fast: 120ms;
+  --duration-normal: 250ms;
+}
+
+/* High contrast mode — brighter for visibility, still not toxic */
+.high-contrast {
+  --text-primary: #a0e8c0;
+  --text-dim: #70c090;
+  --text-muted: #508868;
+  --color-perfect: #70d8e8;
+  --color-good: #80d880;
+  --color-bad: #e8c050;
+  --color-miss: #e86060;
+}
+
+/* Font size overrides */
+.font-small {
+  --font-size-base: 14px;
+  --font-size-sm: 12px;
+  --font-size-lg: 17px;
+}
+
+.font-large {
+  --font-size-base: 18px;
+  --font-size-sm: 16px;
+  --font-size-lg: 24px;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ===== CANVAS ===== */
+#game-canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* ===== UTILITY ===== */
+.hidden {
+  display: none !important;
+}
+
+.accent {
+  color: var(--accent-bright);
+}
+
+/* ===== SCANLINE OVERLAY (CSS-based, toggleable) ===== */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.08) 2px,
+      rgba(0, 0, 0, 0.08) 4px);
+  opacity: 1;
+  transition: opacity var(--duration-normal);
+}
+
+.no-glitch body::after,
+body.no-glitch::after {
+  opacity: 0;
+}
+
+/* ===== COUNTDOWN OVERLAY ===== */
+.countdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10, 14, 20, 0.85);
+  z-index: 100;
+}
+
+.countdown-text {
+  font-size: var(--font-size-huge);
+  font-weight: 700;
+  color: var(--text-primary);
+  text-shadow: 0 0 12px rgba(140, 207, 170, 0.3);
+  animation: countdownPulse 0.8s var(--ease-out);
+}
+
+@keyframes countdownPulse {
+  0% {
+    transform: scale(2);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* ===== REDUCED MOTION ===== */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

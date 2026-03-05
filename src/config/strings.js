@@ -1,0 +1,25 @@
+/** Terminal-flavored strings for in-game events */
+export const STRINGS = {
+    HIT_PERFECT: '✓ ACCESS GRANTED',
+    HIT_GOOD: '[OK] PACKET BLOCKED',
+    HIT_BAD: '[~] PARTIAL BLOCK',
+    HIT_MISS: '[ERR] INTRUSION DETECTED',
+
+    GAME_OVER: 'SYSTEM COMPROMISED',
+    NEW_KEY: 'NEW KEY UNLOCKED',
+
+    COUNTDOWN: ['INITIALIZING...', '3', '2', '1', 'DEFEND'],
+
+    TUTORIAL_STEPS: [
+        'VIRUSES CARRY SYMBOLS.\nTYPE THE MATCHING KEY TO DESTROY THEM.',
+        'HIT THEM CLOSE TO THE CORE\nFOR A PERFECT SCORE.',
+        'COMBOS MULTIPLY YOUR SCORE.\nDON\'T MISS!',
+    ],
+
+    RANKS: {
+        S: 'S  ELITE HACKER',
+        A: 'A  SENIOR ANALYST',
+        B: 'B  JUNIOR OPERATIVE',
+        C: 'C  RECRUIT',
+    },
+};

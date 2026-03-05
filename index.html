@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Hack Swipe — a hacker-themed typing defense game. Defend your firewall by typing fast!">
+  <title>Hack Swipe — Typing Defense</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/index.css">
+  <link rel="stylesheet" href="/styles/hud.css">
+  <link rel="stylesheet" href="/styles/screens.css">
+</head>
+
+<body>
+  <canvas id="game-canvas"></canvas>
+
+  <div id="hud" class="hud hidden">
+    <div class="hud-top-left">
+      <div class="hud-label">SCORE</div>
+      <div id="hud-score" class="hud-value">0</div>
+    </div>
+    <div class="hud-top-right">
+      <div class="hud-label">COMBO</div>
+      <div id="hud-combo" class="hud-value">0</div>
+      <div id="hud-multiplier" class="hud-multiplier">x1.0</div>
+    </div>
+    <div class="hud-bottom">
+      <div class="hud-integrity">
+        <div class="hud-label">SYSTEM INTEGRITY</div>
+        <div id="hud-hp" class="hp-bar">
+          <div class="hp-segment active"></div>
+          <div class="hp-segment active"></div>
+          <div class="hp-segment active"></div>
+          <div class="hp-segment active"></div>
+          <div class="hp-segment active"></div>
+        </div>
+      </div>
+      <div class="hud-bpm">
+        <div class="hud-label">BPM</div>
+        <div id="hud-bpm-value" class="hud-value">120</div>
+      </div>
+    </div>
+    <div id="hud-hit-feedback" class="hit-feedback"></div>
+  </div>
+
+  <div id="keyboard-display" class="keyboard-display hidden"></div>
+
+  <div id="screen-menu" class="screen">
+    <div class="menu-container">
+      <div class="menu-title-block">
+        <div class="menu-glitch-line">// SYSTEM BREACH DETECTED</div>
+        <h1 class="menu-title">HACK<span class="accent">SWIPE</span></h1>
+        <div class="menu-subtitle">TYPING DEFENSE PROTOCOL v2.0</div>
+      </div>
+      <nav class="menu-nav">
+        <button id="btn-sprint" class="menu-btn" data-action="start-sprint">
+          <span class="btn-prefix">&gt;</span> SPRINT MODE <span class="btn-hint">[2:30]</span>
+        </button>
+        <button id="btn-endless" class="menu-btn" data-action="start-endless">
+          <span class="btn-prefix">&gt;</span> ENDLESS MODE
+        </button>
+        <button id="btn-training" class="menu-btn" data-action="start-training">
+          <span class="btn-prefix">&gt;</span> TRAINING
+        </button>
+        <button id="btn-rhythm" class="menu-btn menu-btn--accent" data-action="start-rhythm">
+          <span class="btn-prefix">♪</span> RHYTHM MODE <span class="btn-hint">[♫]</span>
+        </button>
+        <button id="btn-settings" class="menu-btn" data-action="settings">
+          <span class="btn-prefix">&gt;</span> SETTINGS
+        </button>
+      </nav>
+      <div class="menu-footer">
+        <span class="menu-best">BEST: <span id="menu-best-score">0</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-pause" class="screen hidden">
+    <div class="pause-container">
+      <h2 class="pause-title">// PAUSED</h2>
+      <div class="pause-actions">
+        <button id="btn-resume" class="menu-btn" data-action="resume">
+          <span class="btn-prefix">&gt;</span> RESUME
+        </button>
+        <button id="btn-restart" class="menu-btn" data-action="restart">
+          <span class="btn-prefix">&gt;</span> RESTART
+        </button>
+        <button id="btn-quit" class="menu-btn" data-action="quit">
+          <span class="btn-prefix">&gt;</span> QUIT TO MENU
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-gameover" class="screen hidden">
+    <div class="gameover-container">
+      <h2 class="gameover-title">SYSTEM COMPROMISED</h2>
+      <div id="gameover-rank" class="gameover-rank">C</div>
+      <div class="gameover-stats">
+        <div class="stat-row"><span class="stat-label">SCORE</span><span id="go-score" class="stat-value">0</span></div>
+        <div class="stat-row"><span class="stat-label">MAX COMBO</span><span id="go-combo" class="stat-value">0</span>
+        </div>
+        <div class="stat-row"><span class="stat-label">ACCURACY</span><span id="go-accuracy"
+            class="stat-value">0%</span></div>
+        <div class="stat-row"><span class="stat-label">PERFECT</span><span id="go-perfect" class="stat-value">0</span>
+        </div>
+        <div class="stat-row"><span class="stat-label">GOOD</span><span id="go-good" class="stat-value">0</span></div>
+        <div class="stat-row"><span class="stat-label">BAD</span><span id="go-bad" class="stat-value">0</span></div>
+        <div class="stat-row"><span class="stat-label">MISS</span><span id="go-miss" class="stat-value">0</span></div>
+      </div>
+      <div class="gameover-actions">
+        <button id="btn-retry" class="menu-btn" data-action="restart">
+          <span class="btn-prefix">&gt;</span> RETRY
+        </button>
+        <button id="btn-menu" class="menu-btn" data-action="quit">
+          <span class="btn-prefix">&gt;</span> MENU
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-settings" class="screen hidden">
+    <div class="settings-container">
+      <h2 class="settings-title">// SETTINGS</h2>
+      <div class="settings-group">
+        <label class="setting-label">KEYBOARD LAYOUT</label>
+        <select id="setting-layout" class="setting-select">
+          <option value="en">ENGLISH (QWERTY)</option>
+          <option value="ru">РУССКИЙ (ЙЦУКЕН)</option>
+        </select>
+      </div>
+      <div class="settings-group">
+        <label class="setting-label">DIFFICULTY</label>
+        <select id="setting-difficulty" class="setting-select">
+          <option value="recruit">RECRUIT (2 keys)</option>
+          <option value="intern">INTERN (4 keys)</option>
+          <option value="analyst" selected>ANALYST (8 keys)</option>
+          <option value="hacker">HACKER (12 keys)</option>
+          <option value="elite">ELITE (18+ keys)</option>
+          <option value="grandmaster">GRANDMASTER (24+ keys)</option>
+        </select>
+      </div>
+      <div class="settings-group">
+        <label class="setting-label">MASTER VOLUME</label>
+        <input id="setting-volume" type="range" min="0" max="100" value="70" class="setting-range">
+      </div>
+      <div class="settings-group">
+        <label class="setting-label">HIGH CONTRAST</label>
+        <button id="setting-contrast" class="setting-toggle" data-state="off">OFF</button>
+      </div>
+      <div class="settings-group">
+        <label class="setting-label">GLITCH EFFECTS</label>
+        <button id="setting-glitch" class="setting-toggle" data-state="on">ON</button>
+      </div>
+      <div class="settings-group">
+        <label class="setting-label">FONT SIZE</label>
+        <select id="setting-fontsize" class="setting-select">
+          <option value="small">SMALL</option>
+          <option value="medium" selected>MEDIUM</option>
+          <option value="large">LARGE</option>
+        </select>
+      </div>
+      <button id="btn-settings-back" class="menu-btn" data-action="back">
+        <span class="btn-prefix">&gt;</span> BACK
+      </button>
+    </div>
+  </div>
+
+  <div id="screen-tutorial" class="screen hidden">
+    <div class="tutorial-container">
+      <div id="tutorial-step" class="tutorial-step">
+        <div class="tutorial-text"></div>
+        <div class="tutorial-highlight"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="screen-rhythm-upload" class="screen hidden">
+    <div class="rhythm-upload-container">
+      <h2 class="settings-title">♪ RHYTHM MODE</h2>
+      <p class="rhythm-desc">Drop an audio file to play along to the beat.</p>
+      <div id="rhythm-dropzone" class="rhythm-dropzone">
+        <div class="dropzone-icon">♫</div>
+        <div class="dropzone-text">DROP AUDIO FILE HERE</div>
+        <div class="dropzone-hint">MP3, WAV, OGG, FLAC</div>
+        <input id="rhythm-file-input" type="file" accept="audio/*" class="hidden">
+      </div>
+      <button id="btn-rhythm-browse" class="menu-btn">BROWSE FILES</button>
+      <div class="settings-group" style="margin-top:var(--sp-lg)">
+        <label class="setting-label">BEAT DENSITY</label>
+        <div class="sensitivity-wrap">
+          <span class="sensitivity-label">Chill</span>
+          <input id="rhythm-sensitivity" type="range" min="1" max="5" value="3" step="1" class="setting-range">
+          <span class="sensitivity-label">Intense</span>
+        </div>
+      </div>
+      <div id="rhythm-track-info" class="rhythm-track-info hidden">
+        <div class="track-name" id="rhythm-track-name"></div>
+        <button id="btn-rhythm-start" class="menu-btn menu-btn--accent">♪ START</button>
+      </div>
+      <button id="btn-rhythm-back" class="menu-btn">BACK</button>
+    </div>
+  </div>
+
+  <div id="screen-analyzing" class="screen hidden">
+    <div class="analyzing-container">
+      <h2 class="settings-title">/// ANALYZING BEATS</h2>
+      <div class="analyzing-bar-wrap">
+        <div id="analyzing-bar" class="analyzing-bar"></div>
+      </div>
+      <div id="analyzing-status" class="analyzing-status">Decoding audio...</div>
+    </div>
+  </div>
+
+  <div id="countdown-overlay" class="countdown-overlay hidden">
+    <div id="countdown-text" class="countdown-text">3</div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>
